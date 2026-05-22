@@ -4,16 +4,25 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>SRISHTI 2K26</title>
 
 <link rel="stylesheet" href="style.css">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+rel="stylesheet">
 
 <link
 rel="stylesheet"
@@ -33,6 +42,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     <div class="glow"></div>
 
     <div class="fog fog-left"></div>
+
     <div class="fog fog-right"></div>
 
     <div class="noise"></div>
@@ -91,19 +101,25 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         <div class="headline-glow"></div>
 
         <h1 class="headline">
-            NOT JUST AN EVENT
+            UNVEILING SOON
         </h1>
 
     </div>
 
-    <p class="tagline">
+    <p class="tagline tagline-show">
         SOMETHING MASSIVE IS APPROACHING
     </p>
 
     <div class="socials">
 
-        <a href="#" class="social">
-            <i class="fa-brands fa-instagram"></i>
+        <a
+            href="https://www.instagram.com/srishti2k26?igsh=am52a2w4dWM1dGky"
+            target="_blank"
+            class="social"
+            aria-label="Instagram">
+
+                <i class="fa-brands fa-instagram"></i>
+
         </a>
 
         <a href="#" class="social">
@@ -202,9 +218,11 @@ const lines = [
 
 let current = 0;
 
-setInterval(()=>{
+function switchTagline(){
 
-    tagline.style.opacity = 0;
+    tagline.classList.remove("tagline-show");
+
+    tagline.classList.add("tagline-hide");
 
     setTimeout(()=>{
 
@@ -214,11 +232,15 @@ setInterval(()=>{
         tagline.innerText =
         lines[current];
 
-        tagline.style.opacity = 1;
+        tagline.classList.remove("tagline-hide");
 
-    },400);
+        tagline.classList.add("tagline-show");
 
-},3500);
+    },700);
+
+}
+
+setInterval(switchTagline,4000);
 
 document.addEventListener(
 "contextmenu",
