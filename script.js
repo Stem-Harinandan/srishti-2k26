@@ -281,7 +281,7 @@ setInterval(switchTagline, 4000);
 ========================= */
 
 const revealDate =
-new Date("2026-05-28T17:00:00");
+new Date("2026-06-01T17:00:00");
 
 let revealed = false;
 
