@@ -360,21 +360,97 @@ function triggerReveal(){
 }
 
 /* =========================
-   TEST BUTTON
+   TEST BUTTON — HIDDEN BY DEFAULT
+   Only visible after secret combo.
 ========================= */
 
 const testButton =
 document.getElementById("testReveal");
 
+/* Hide it from everyone on load */
 if(testButton){
+    testButton.style.display = "none";
+}
 
-    testButton.addEventListener("click", ()=>{
+function toggleReveal(){
+
+    if(!revealed){
 
         triggerReveal();
 
-    });
+        if(testButton)
+            testButton.innerText = "HIDE ↩";
+
+    } else {
+
+        /* Reset back to pre-reveal */
+        revealed = false;
+
+        document.body.classList.remove("revealed");
+
+        const logoClear =
+        document.getElementById("logoClear");
+
+        if(logoClear){
+
+            logoClear.style.opacity = "0";
+
+            setTimeout(()=>{
+
+                logoClear.src = "";
+                logoClear.style.opacity = "";
+
+            }, 600);
+
+        }
+
+        if(testButton)
+            testButton.innerText = "REVEAL ↗";
+
+    }
 
 }
+
+if(testButton){
+    testButton.addEventListener("click", toggleReveal);
+}
+
+/* =========================
+   SECRET KEY COMBO
+   Press: S + R + I simultaneously
+   (first letters of SRISHTI)
+   — shows the toggle button
+   — and fires the preview
+========================= */
+
+const SECRET_KEYS = new Set(["s","r","i"]);
+const keysHeld    = new Set();
+
+document.addEventListener("keydown", function(e){
+
+    keysHeld.add(e.key.toLowerCase());
+
+    const allHeld = [...SECRET_KEYS].every(
+        k => keysHeld.has(k)
+    );
+
+    if(allHeld){
+
+        if(testButton){
+            testButton.style.display = "block";
+        }
+
+        toggleReveal();
+
+        keysHeld.clear();
+
+    }
+
+});
+
+document.addEventListener("keyup", function(e){
+    keysHeld.delete(e.key.toLowerCase());
+});
 
 /* =========================
    COUNTDOWN
