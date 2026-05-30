@@ -252,12 +252,42 @@ function switchTagline() {
 setInterval(switchTagline, 4000);
 
 /* =========================
-   REVEAL
+   REVEAL DATES
 ========================= */
 
-const revealDate = new Date("2026-06-01T17:00:00");
+const TEST_MODE = false;
 
-const websiteRevealDate = new Date("2026-06-01T17:30:00");
+/*
+TEST_MODE = true
+
+10 sec -> Logo Reveal
+30 sec -> Full Website
+
+TEST_MODE = false
+
+Uses actual launch dates
+*/
+
+let revealDate;
+let websiteRevealDate;
+
+if (TEST_MODE) {
+
+    revealDate =
+    new Date(Date.now() + 10000);
+
+    websiteRevealDate =
+    new Date(Date.now() + 30000);
+
+} else {
+
+    revealDate =
+    new Date("2026-06-01T17:00:00");
+
+    websiteRevealDate =
+    new Date("2026-06-01T17:30:00");
+
+}
 
 let revealed = false;
 
@@ -398,42 +428,64 @@ document.addEventListener("keyup", function (e) {
    COUNTDOWN
 ========================= */
 
-const now = new Date();
+function updateCountdown() {
 
-if (now >= revealDate) {
-  triggerReveal();
+    const now = new Date();
 
-  if (now >= websiteRevealDate) {
-    window.location.replace("https://srishti.eu.org/reveal/");
-  }
+    /* Full website live */
 
-  return;
+    if (now >= websiteRevealDate) {
 
-  const distance = revealDate - now;
+        window.location.replace(
+            "https://srishti.eu.org/reveal/"
+        );
 
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        return;
+    }
 
-  const hours = Math.floor(
-    (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-  );
+    /* Logo reveal phase */
 
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    if (now >= revealDate) {
 
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        triggerReveal();
 
-  document.getElementById("days").innerText = String(days).padStart(2, "0");
+        return;
+    }
 
-  document.getElementById("hours").innerText = String(hours).padStart(2, "0");
+    /* Normal countdown */
 
-  document.getElementById("minutes").innerText = String(minutes).padStart(
-    2,
-    "0",
-  );
+    const distance = revealDate - now;
 
-  document.getElementById("seconds").innerText = String(seconds).padStart(
-    2,
-    "0",
-  );
+    const days = Math.floor(
+        distance / (1000 * 60 * 60 * 24)
+    );
+
+    const hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24))
+        / (1000 * 60 * 60)
+    );
+
+    const minutes = Math.floor(
+        (distance % (1000 * 60 * 60))
+        / (1000 * 60)
+    );
+
+    const seconds = Math.floor(
+        (distance % (1000 * 60))
+        / 1000
+    );
+
+    document.getElementById("days").innerText =
+        String(days).padStart(2, "0");
+
+    document.getElementById("hours").innerText =
+        String(hours).padStart(2, "0");
+
+    document.getElementById("minutes").innerText =
+        String(minutes).padStart(2, "0");
+
+    document.getElementById("seconds").innerText =
+        String(seconds).padStart(2, "0");
 }
 
 updateCountdown();
