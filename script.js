@@ -4,116 +4,110 @@
    before reveal date.
 ========================= */
 
-(function(){
+(function () {
+  /* --- 1. DISABLE RIGHT-CLICK --- */
 
-    /* --- 1. DISABLE RIGHT-CLICK --- */
+  document.addEventListener(
+    "contextmenu",
+    function (e) {
+      e.preventDefault();
+    },
+    true,
+  );
 
-    document.addEventListener(
-        "contextmenu",
-        function(e){ e.preventDefault(); },
-        true
-    );
+  /* --- 2. BLOCK DEVTOOLS KEYBOARD SHORTCUTS --- */
 
-    /* --- 2. BLOCK DEVTOOLS KEYBOARD SHORTCUTS --- */
+  document.addEventListener(
+    "keydown",
+    function (e) {
+      const key = e.key;
+      const ctrl = e.ctrlKey || e.metaKey;
+      const shift = e.shiftKey;
 
-    document.addEventListener("keydown", function(e){
-
-        const key   = e.key;
-        const ctrl  = e.ctrlKey || e.metaKey;
-        const shift = e.shiftKey;
-
-        /* F12 */
-        if(key === "F12"){
-            e.preventDefault();
-            return false;
-        }
-
-        /* Ctrl+Shift+I  — Elements / Inspector */
-        /* Ctrl+Shift+J  — Console              */
-        /* Ctrl+Shift+C  — Pick element         */
-        /* Ctrl+Shift+K  — (Firefox console)    */
-        if(ctrl && shift && ["I","J","C","K"].includes(key.toUpperCase())){
-            e.preventDefault();
-            return false;
-        }
-
-        /* Ctrl+U  — View Source */
-        if(ctrl && key.toUpperCase() === "U"){
-            e.preventDefault();
-            return false;
-        }
-
-        /* Ctrl+S  — Save Page As */
-        if(ctrl && key.toUpperCase() === "S"){
-            e.preventDefault();
-            return false;
-        }
-
-        /* Ctrl+A  — Select All (stops mass-copy) */
-        if(ctrl && key.toUpperCase() === "A"){
-            e.preventDefault();
-            return false;
-        }
-
-    }, true);
-
-    /* --- 3. DISABLE TEXT SELECTION --- */
-
-    document.addEventListener("selectstart", function(e){
+      /* F12 */
+      if (key === "F12") {
         e.preventDefault();
-    });
+        return false;
+      }
 
-    /* --- 4. DISABLE IMAGE DRAG --- */
+      /* Ctrl+Shift+I  — Elements / Inspector */
+      /* Ctrl+Shift+J  — Console              */
+      /* Ctrl+Shift+C  — Pick element         */
+      /* Ctrl+Shift+K  — (Firefox console)    */
+      if (ctrl && shift && ["I", "J", "C", "K"].includes(key.toUpperCase())) {
+        e.preventDefault();
+        return false;
+      }
 
-    document.addEventListener("dragstart", function(e){
-        if(e.target.tagName === "IMG"){
-            e.preventDefault();
-        }
-    });
+      /* Ctrl+U  — View Source */
+      if (ctrl && key.toUpperCase() === "U") {
+        e.preventDefault();
+        return false;
+      }
 
-    /* --- 5. DEVTOOLS SIZE DETECTION ---
+      /* Ctrl+S  — Save Page As */
+      if (ctrl && key.toUpperCase() === "S") {
+        e.preventDefault();
+        return false;
+      }
+
+      /* Ctrl+A  — Select All (stops mass-copy) */
+      if (ctrl && key.toUpperCase() === "A") {
+        e.preventDefault();
+        return false;
+      }
+    },
+    true,
+  );
+
+  /* --- 3. DISABLE TEXT SELECTION --- */
+
+  document.addEventListener("selectstart", function (e) {
+    e.preventDefault();
+  });
+
+  /* --- 4. DISABLE IMAGE DRAG --- */
+
+  document.addEventListener("dragstart", function (e) {
+    if (e.target.tagName === "IMG") {
+      e.preventDefault();
+    }
+  });
+
+  /* --- 5. DEVTOOLS SIZE DETECTION ---
         When DevTools is docked, the inner
         window shrinks noticeably.
         Blur the logo area if detected.
     ---------------------------------------- */
 
-    const DEVTOOLS_THRESHOLD = 160;
+  const DEVTOOLS_THRESHOLD = 160;
 
-    let devToolsOpen = false;
+  let devToolsOpen = false;
 
-    function checkDevTools(){
+  function checkDevTools() {
+    const widthGap = window.outerWidth - window.innerWidth;
 
-        const widthGap  =
-            window.outerWidth  - window.innerWidth;
+    const heightGap = window.outerHeight - window.innerHeight;
 
-        const heightGap =
-            window.outerHeight - window.innerHeight;
+    const isOpen =
+      widthGap > DEVTOOLS_THRESHOLD || heightGap > DEVTOOLS_THRESHOLD;
 
-        const isOpen =
-            widthGap  > DEVTOOLS_THRESHOLD ||
-            heightGap > DEVTOOLS_THRESHOLD;
+    if (isOpen && !devToolsOpen) {
+      devToolsOpen = true;
 
-        if(isOpen && !devToolsOpen){
+      document.body.classList.add("devtools-open");
+    } else if (!isOpen && devToolsOpen) {
+      devToolsOpen = false;
 
-            devToolsOpen = true;
-
-            document.body.classList.add("devtools-open");
-
-        } else if(!isOpen && devToolsOpen){
-
-            devToolsOpen = false;
-
-            document.body.classList.remove("devtools-open");
-
-        }
-
+      document.body.classList.remove("devtools-open");
     }
+  }
 
-    setInterval(checkDevTools, 800);
+  setInterval(checkDevTools, 800);
 
-    /* --- 6. CONSOLE WARNING + PERIODIC CLEAR --- */
+  /* --- 6. CONSOLE WARNING + PERIODIC CLEAR --- */
 
-    const CONSOLE_WARNING = `
+  const CONSOLE_WARNING = `
 %c⛔  STOP!
 %cThis is a browser feature intended for developers.
 Attempting to inspect or extract content before
@@ -121,23 +115,20 @@ the reveal is not cool. The logo will be public
 at the reveal — be patient!
 `;
 
-    function printWarning(){
+  function printWarning() {
+    console.clear();
 
-        console.clear();
+    console.log(
+      CONSOLE_WARNING,
+      "color:#d8c9ff;font-size:26px;font-weight:700;",
+      "color:#ffffff88;font-size:13px;",
+    );
+  }
 
-        console.log(
-            CONSOLE_WARNING,
-            "color:#d8c9ff;font-size:26px;font-weight:700;",
-            "color:#ffffff88;font-size:13px;"
-        );
+  printWarning();
 
-    }
-
-    printWarning();
-
-    /* Reprint every 3 s so the console stays noisy */
-    setInterval(printWarning, 3000);
-
+  /* Reprint every 3 s so the console stays noisy */
+  setInterval(printWarning, 3000);
 })();
 
 /* =========================
@@ -145,11 +136,10 @@ at the reveal — be patient!
    (injected so no extra file needed)
 ========================= */
 
-(function(){
+(function () {
+  const style = document.createElement("style");
 
-    const style = document.createElement("style");
-
-    style.textContent = `
+  style.textContent = `
 
         /* Blur + lock logo when DevTools detected */
         body.devtools-open .logo-clear,
@@ -183,35 +173,27 @@ at the reveal — be patient!
 
     `;
 
-    document.head.appendChild(style);
-
+  document.head.appendChild(style);
 })();
 
 /* =========================
    PAGE LOAD
 ========================= */
 
-window.addEventListener("load", ()=>{
+window.addEventListener("load", () => {
+  document.body.classList.add("loaded");
 
-    document.body.classList.add("loaded");
+  /* BACKGROUND MUSIC */
 
-    /* BACKGROUND MUSIC */
+  const bgMusic = document.getElementById("bgMusic");
 
-    const bgMusic =
-    document.getElementById("bgMusic");
+  if (bgMusic) {
+    bgMusic.volume = BACKGROUND_MUSIC_VOLUME;
 
-    if(bgMusic){
-
-        bgMusic.volume = BACKGROUND_MUSIC_VOLUME;
-
-        bgMusic.play().catch(()=>{
-            console.log(
-                "Autoplay blocked until user interaction."
-            );
-        });
-
-    }
-
+    bgMusic.play().catch(() => {
+      console.log("Autoplay blocked until user interaction.");
+    });
+  }
 });
 
 /* =========================
@@ -225,7 +207,7 @@ const BACKGROUND_MUSIC_VOLUME = 0.05;
     1.00 → max
 */
 
-const REVEAL_SOUND_VOLUME = 0.30;
+const REVEAL_SOUND_VOLUME = 0.3;
 /*
     Reveal should usually
     be louder than bg music
@@ -235,43 +217,36 @@ const REVEAL_SOUND_VOLUME = 0.30;
    TAGLINES
 ========================= */
 
-const tagline =
-document.querySelector(".tagline");
+const tagline = document.querySelector(".tagline");
 
 const lines = [
+  "2022 • DEXTERITY • ALLIES • ADULATION",
 
-    "2022 • DEXTERITY • ALLIES • ADULATION",
+  "2023 • FERVENCY ANCHORED BY LEGACY",
 
-    "2023 • FERVENCY ANCHORED BY LEGACY",
+  "2024 • PROVENANCE UNVEILS PROWESS",
 
-    "2024 • PROVENANCE UNVEILS PROWESS",
+  "2025 • EXUBERANCE IN IRIDESCENCE",
 
-    "2025 • EXUBERANCE IN IRIDESCENCE",
-
-    "2026 • █████████████"
-
+  "2026 • █████████████",
 ];
 
 let current = 0;
 
-function switchTagline(){
+function switchTagline() {
+  tagline.classList.remove("tagline-show");
 
-    tagline.classList.remove("tagline-show");
+  tagline.classList.add("tagline-hide");
 
-    tagline.classList.add("tagline-hide");
+  setTimeout(() => {
+    current = (current + 1) % lines.length;
 
-    setTimeout(()=>{
+    tagline.innerText = lines[current];
 
-        current = (current + 1) % lines.length;
+    tagline.classList.remove("tagline-hide");
 
-        tagline.innerText = lines[current];
-
-        tagline.classList.remove("tagline-hide");
-
-        tagline.classList.add("tagline-show");
-
-    }, 700);
-
+    tagline.classList.add("tagline-show");
+  }, 700);
 }
 
 setInterval(switchTagline, 4000);
@@ -280,83 +255,70 @@ setInterval(switchTagline, 4000);
    REVEAL
 ========================= */
 
-const revealDate =
-new Date("2026-06-01T17:00:00");
+const revealDate = new Date("2026-06-01T17:00:00");
+
+const websiteRevealDate = new Date("2026-06-01T17:30:00");
 
 let revealed = false;
 
-function triggerReveal(){
+function triggerReveal() {
+  if (revealed) return;
 
-    if(revealed) return;
+  revealed = true;
 
-    revealed = true;
-
-    /*
+  /*
         SECURITY: The real logo src is set HERE,
         only at reveal time. It is never present
         in the HTML, so the browser never downloads
         logo.png until this function fires.
     */
 
-    const logoClear =
-    document.getElementById("logoClear");
+  const logoClear = document.getElementById("logoClear");
 
-    if(logoClear){
-
-        /*
+  if (logoClear) {
+    /*
             Set the src dynamically.
             Rename "logo.png" on your server to
             something unpredictable (e.g. "s2k26_r.png")
             for an extra layer of obscurity.
         */
 
-        logoClear.src = "logo.png";
+    logoClear.src = "logo.png";
+  }
 
-    }
+  document.body.classList.add("revealed");
 
-    document.body.classList.add("revealed");
+  /* REVEAL SOUND */
 
-    /* REVEAL SOUND */
+  const revealSound = document.getElementById("revealSound");
 
-    const revealSound =
-    document.getElementById("revealSound");
+  if (revealSound) {
+    revealSound.volume = REVEAL_SOUND_VOLUME;
 
-    if(revealSound){
+    revealSound.currentTime = 0;
 
-        revealSound.volume = REVEAL_SOUND_VOLUME;
+    revealSound.play();
+  }
 
-        revealSound.currentTime = 0;
+  /* BG MUSIC DUCKING */
 
-        revealSound.play();
+  const bgMusic = document.getElementById("bgMusic");
 
-    }
+  if (bgMusic) {
+    bgMusic.animate(
+      [
+        { volume: BACKGROUND_MUSIC_VOLUME },
+        { volume: BACKGROUND_MUSIC_VOLUME * 0.35 },
+      ],
 
-    /* BG MUSIC DUCKING */
+      {
+        duration: 2500,
+        fill: "forwards",
+      },
+    );
 
-    const bgMusic =
-    document.getElementById("bgMusic");
-
-    if(bgMusic){
-
-        bgMusic.animate(
-
-            [
-                { volume: BACKGROUND_MUSIC_VOLUME },
-                { volume: BACKGROUND_MUSIC_VOLUME * 0.35 }
-            ],
-
-            {
-                duration: 2500,
-                fill: "forwards"
-            }
-
-        );
-
-        bgMusic.volume =
-        BACKGROUND_MUSIC_VOLUME * 0.35;
-
-    }
-
+    bgMusic.volume = BACKGROUND_MUSIC_VOLUME * 0.35;
+  }
 }
 
 /* =========================
@@ -364,55 +326,41 @@ function triggerReveal(){
    Only visible after secret combo.
 ========================= */
 
-const testButton =
-document.getElementById("testReveal");
+const testButton = document.getElementById("testReveal");
 
 /* Hide it from everyone on load */
-if(testButton){
-    testButton.style.display = "none";
+if (testButton) {
+  testButton.style.display = "none";
 }
 
-function toggleReveal(){
+function toggleReveal() {
+  if (!revealed) {
+    triggerReveal();
 
-    if(!revealed){
+    if (testButton) testButton.innerText = "HIDE ↩";
+  } else {
+    /* Reset back to pre-reveal */
+    revealed = false;
 
-        triggerReveal();
+    document.body.classList.remove("revealed");
 
-        if(testButton)
-            testButton.innerText = "HIDE ↩";
+    const logoClear = document.getElementById("logoClear");
 
-    } else {
+    if (logoClear) {
+      logoClear.style.opacity = "0";
 
-        /* Reset back to pre-reveal */
-        revealed = false;
-
-        document.body.classList.remove("revealed");
-
-        const logoClear =
-        document.getElementById("logoClear");
-
-        if(logoClear){
-
-            logoClear.style.opacity = "0";
-
-            setTimeout(()=>{
-
-                logoClear.src = "";
-                logoClear.style.opacity = "";
-
-            }, 600);
-
-        }
-
-        if(testButton)
-            testButton.innerText = "REVEAL ↗";
-
+      setTimeout(() => {
+        logoClear.src = "";
+        logoClear.style.opacity = "";
+      }, 600);
     }
 
+    if (testButton) testButton.innerText = "REVEAL ↗";
+  }
 }
 
-if(testButton){
-    testButton.addEventListener("click", toggleReveal);
+if (testButton) {
+  testButton.addEventListener("click", toggleReveal);
 }
 
 /* =========================
@@ -423,82 +371,69 @@ if(testButton){
    — and fires the preview
 ========================= */
 
-const SECRET_KEYS = new Set(["s","r","i"]);
-const keysHeld    = new Set();
+const SECRET_KEYS = new Set(["s", "r", "i"]);
+const keysHeld = new Set();
 
-document.addEventListener("keydown", function(e){
+document.addEventListener("keydown", function (e) {
+  keysHeld.add(e.key.toLowerCase());
 
-    keysHeld.add(e.key.toLowerCase());
+  const allHeld = [...SECRET_KEYS].every((k) => keysHeld.has(k));
 
-    const allHeld = [...SECRET_KEYS].every(
-        k => keysHeld.has(k)
-    );
-
-    if(allHeld){
-
-        if(testButton){
-            testButton.style.display = "block";
-        }
-
-        toggleReveal();
-
-        keysHeld.clear();
-
+  if (allHeld) {
+    if (testButton) {
+      testButton.style.display = "block";
     }
 
+    toggleReveal();
+
+    keysHeld.clear();
+  }
 });
 
-document.addEventListener("keyup", function(e){
-    keysHeld.delete(e.key.toLowerCase());
+document.addEventListener("keyup", function (e) {
+  keysHeld.delete(e.key.toLowerCase());
 });
 
 /* =========================
    COUNTDOWN
 ========================= */
 
-function updateCountdown(){
+const now = new Date();
 
-    const now      = new Date();
-    const distance = revealDate - now;
+if (now >= revealDate) {
+  triggerReveal();
 
-    if(distance <= 0){
+  if (now >= websiteRevealDate) {
+    window.location.replace("https://srishti.eu.org/reveal/");
+  }
 
-        triggerReveal();
+  return;
 
-        return;
+  const distance = revealDate - now;
 
-    }
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
 
-    const days =
-    Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor(
+    (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+  );
 
-    const hours =
-    Math.floor(
-        (distance % (1000 * 60 * 60 * 24)) /
-        (1000 * 60 * 60)
-    );
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
 
-    const minutes =
-    Math.floor(
-        (distance % (1000 * 60 * 60)) /
-        (1000 * 60)
-    );
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    const seconds =
-    Math.floor((distance % (1000 * 60)) / 1000);
+  document.getElementById("days").innerText = String(days).padStart(2, "0");
 
-    document.getElementById("days").innerText =
-        String(days).padStart(2, "0");
+  document.getElementById("hours").innerText = String(hours).padStart(2, "0");
 
-    document.getElementById("hours").innerText =
-        String(hours).padStart(2, "0");
+  document.getElementById("minutes").innerText = String(minutes).padStart(
+    2,
+    "0",
+  );
 
-    document.getElementById("minutes").innerText =
-        String(minutes).padStart(2, "0");
-
-    document.getElementById("seconds").innerText =
-        String(seconds).padStart(2, "0");
-
+  document.getElementById("seconds").innerText = String(seconds).padStart(
+    2,
+    "0",
+  );
 }
 
 updateCountdown();
@@ -509,91 +444,76 @@ setInterval(updateCountdown, 1000);
    CURSOR GLOW
 ========================= */
 
-const glowCursor =
-document.createElement("div");
+const glowCursor = document.createElement("div");
 
 glowCursor.classList.add("cursor-glow");
 
 document.body.appendChild(glowCursor);
 
-document.addEventListener("mousemove", (e)=>{
-
-    glowCursor.style.left = e.clientX + "px";
-    glowCursor.style.top  = e.clientY + "px";
-
+document.addEventListener("mousemove", (e) => {
+  glowCursor.style.left = e.clientX + "px";
+  glowCursor.style.top = e.clientY + "px";
 });
 
 /* =========================
    GLOW PARALLAX
 ========================= */
 
-const glow =
-document.querySelector(".glow");
+const glow = document.querySelector(".glow");
 
-document.addEventListener("mousemove", (e)=>{
+document.addEventListener("mousemove", (e) => {
+  const x = e.clientX / window.innerWidth;
+  const y = e.clientY / window.innerHeight;
 
-    const x = e.clientX / window.innerWidth;
-    const y = e.clientY / window.innerHeight;
-
-    glow.style.transform =
-        `translate(-50%,-50%)
+  glow.style.transform = `translate(-50%,-50%)
         translate(
             ${x * 20 - 10}px,
             ${y * 20 - 10}px
         )`;
-
 });
 
 /* =========================
    MOBILE TAP — RESUME AUDIO
 ========================= */
 
-document.addEventListener("click", ()=>{
+document.addEventListener(
+  "click",
+  () => {
+    const bgMusic = document.getElementById("bgMusic");
 
-    const bgMusic =
-    document.getElementById("bgMusic");
-
-    if(bgMusic){
-        bgMusic.play().catch(()=>{});
+    if (bgMusic) {
+      bgMusic.play().catch(() => {});
     }
-
-}, { once: true });
+  },
+  { once: true },
+);
 
 /* =========================
    AUDIO TOGGLE
 ========================= */
 
-const audioToggle =
-document.getElementById("audioToggle");
+const audioToggle = document.getElementById("audioToggle");
 
 let audioMuted = false;
 
-audioToggle.addEventListener("click", ()=>{
+audioToggle.addEventListener("click", () => {
+  audioMuted = !audioMuted;
 
-    audioMuted = !audioMuted;
+  const bgMusic = document.getElementById("bgMusic");
 
-    const bgMusic =
-    document.getElementById("bgMusic");
+  const revealSound = document.getElementById("revealSound");
 
-    const revealSound =
-    document.getElementById("revealSound");
+  if (audioMuted) {
+    if (bgMusic) bgMusic.muted = true;
+    if (revealSound) revealSound.muted = true;
 
-    if(audioMuted){
+    audioToggle.innerText = "SOUND OFF";
+    audioToggle.classList.add("muted");
+  } else {
+    if (bgMusic) bgMusic.muted = false;
+    if (revealSound) revealSound.muted = false;
 
-        if(bgMusic)      bgMusic.muted      = true;
-        if(revealSound)  revealSound.muted  = true;
-
-        audioToggle.innerText = "SOUND OFF";
-        audioToggle.classList.add("muted");
-
-    } else {
-
-        if(bgMusic)      bgMusic.muted      = false;
-        if(revealSound)  revealSound.muted  = false;
-
-        audioToggle.innerText = "SOUND ON";
-        audioToggle.classList.remove("muted");
-
-    }
-
+    audioToggle.innerText = "SOUND ON";
+    audioToggle.classList.remove("muted");
+  }
 });
